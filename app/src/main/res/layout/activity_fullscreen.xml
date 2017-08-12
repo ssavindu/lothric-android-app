@@ -35,13 +35,6 @@
             android:background="@color/black_overlay"
             android:orientation="vertical"
             tools:ignore="UselessParent">
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Firebase"
-                android:onClick="openFirebase"
-                android:id="@+id/btnfirebase"
-                />
 
 
             <com.google.android.gms.common.SignInButton

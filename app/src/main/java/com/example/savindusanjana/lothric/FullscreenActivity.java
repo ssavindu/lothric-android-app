@@ -307,13 +307,6 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
         startActivity(intent);
     }
 
-   /* public void openFirebase(View view){
-        Intent intent = new Intent(FullscreenActivity.this,firebasetest.class);
-        startActivity(intent);
-
-    }
-
-    */
     private void addUser(){
         Log.i(this.getClass().getCanonicalName(),"IN add user");
 
