@@ -36,9 +36,8 @@ public class tabs extends AppCompatActivity {
 
         viewPager.setAdapter(vpa);
         tabLayout.setupWithViewPager(viewPager);
+        user = FirebaseAuth.getInstance().getCurrentUser();
 
-        TextView welcm_txt = (TextView) findViewById(R.id.user_welcome);
-        welcm_txt.setText("Welcome"+user.getDisplayName());
     }
 
     @Override
