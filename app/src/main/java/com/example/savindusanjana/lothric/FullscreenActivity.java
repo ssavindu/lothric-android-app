@@ -176,15 +176,17 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i(this.getClass().getCanonicalName(),"OnActivity");
-        super.onActivityResult(requestCode,resultCode,data);
-        Log.i(this.getClass().getCanonicalName(),"LOG 1");
-        if(requestCode==RC_SIGN_IN){
-            Log.i(this.getClass().getCanonicalName(),"LOG 2");
+        super.onActivityResult(requestCode, resultCode, data);
 
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            Log.i(this.getClass().getCanonicalName(),"check result"+result.isSuccess());
-            handleSignInResult(result);
+            if (result.isSuccess()) {
+                Log.i(this.getClass().getCanonicalName(), "check result" + result.isSuccess() + "result code" + resultCode);
+                handleSignInResult(result);
+            } else {
+                Log.i(this.getClass().getCanonicalName(), "check result" + result.isSuccess() + "result code" + resultCode);
+            }
         }
         Log.i(this.getClass().getCanonicalName(),"End Sign in");
     }
@@ -195,9 +197,9 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
             GoogleSignInAccount account = result.getSignInAccount();
 
             //acnt_name_txt.setText(account.getDisplayName().toString());
-            Log.i(this.getClass().getCanonicalName(),"Before Auth");
+            //Log.i(this.getClass().getCanonicalName(),"Before Auth");
             firebaseAuthwithGoogle(account);
-            Log.i(this.getClass().getCanonicalName(),"After Auth");
+            //Log.i(this.getClass().getCanonicalName(),"After Auth");
         }else{
            // updateUI(null);
         }
