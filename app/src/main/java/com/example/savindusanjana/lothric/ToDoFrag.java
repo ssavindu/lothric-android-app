@@ -22,6 +22,7 @@ import java.util.ArrayList;
 public class ToDoFrag extends Fragment implements View.OnClickListener{
     ArrayList <String> arrayList;
     ArrayAdapter <String> arrayAdapter;
+
     ListView lv;
 
     FloatingActionButton upButton;
@@ -46,10 +47,6 @@ public class ToDoFrag extends Fragment implements View.OnClickListener{
         return view;
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
 
     @Override
     public void onClick(View v) {
