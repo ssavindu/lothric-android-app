@@ -265,4 +265,9 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.i(this.getClass().getCanonicalName(),"Error");
     }
+
+    public void bypassLogin(View view){
+        Intent intent = new Intent(FullscreenActivity.this,tabs.class);
+        startActivity(intent);
+    }
 }
