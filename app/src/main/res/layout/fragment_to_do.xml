@@ -24,7 +24,8 @@
             android:layout_gravity="end|bottom"
             android:layout_margin="10dp"
             android:src="@drawable/ic_action_name"
-            android:onClick="addNew"
+            android:id="@+id/btnAdd"
+
             />
     </android.support.design.widget.CoordinatorLayout>
 </FrameLayout>
