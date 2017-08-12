@@ -19,6 +19,7 @@ public class ToDoFrag extends Fragment {
     ArrayAdapter arrayAdapter;
 
 
+
     public ToDoFrag() {
         // Required empty public constructor
     }
@@ -32,7 +33,6 @@ public class ToDoFrag extends Fragment {
     }
 
     public void addNew(View view){
-
 
     }
 
