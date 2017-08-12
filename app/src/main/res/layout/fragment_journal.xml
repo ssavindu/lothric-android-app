@@ -6,51 +6,7 @@
     tools:context="com.example.savindusanjana.lothric.JournalFrag">
 
     <!-- TODO: Update blank fragment layout -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Write a new journal"
-            android:layout_gravity="center_horizontal"
-            android:textSize="20dp"
-            android:textStyle="bold"
-            android:layout_margin="10dp"
 
-            />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Title:"
-            android:layout_marginTop="30dp"
-            />
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:id="@+id/txtTitle"
-            />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Content:"
-        android:layout_marginTop="120dp"
-        />
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_marginTop="150dp"
-        >
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/txtContent"
-            android:inputType="text|textMultiLine"
-
-            />
-    </ScrollView>
 
 
 
@@ -66,7 +22,8 @@
             android:src="@drawable/ic_action_name"
             android:layout_margin="10dp"
             android:layout_gravity="bottom|end"
-            android:onClick="saveJoural"
+            android:onClick="addJoural"
+            android:id="@+id/addJournal"
             />
     </android.support.design.widget.CoordinatorLayout>
 
