@@ -1,7 +1,9 @@
 package com.example.savindusanjana.lothric;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +19,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
@@ -37,6 +40,7 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
     private static final int RC_SIGN_IN = 9001;
     private GoogleApiClient googleApiClient;
     private FirebaseAuth firebaseAuth;
+    private SignInButton login_btn;
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -116,19 +120,14 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);
+        login_btn = (SignInButton) findViewById(R.id.login_btn);
 
-
-        // Set up the user interaction to manually show or hide the system UI.
         mContentView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 toggle();
             }
         });
-
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
 
         findViewById(R.id.login_btn).setOnClickListener(this);
         GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(getString(R.string.default_web_client_id)).requestEmail().build();
@@ -142,10 +141,6 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-
-        // Trigger the initial hide() shortly after the activity has been
-        // created, to briefly hint to the user that UI controls
-        // are available.
         delayedHide(100);
     }
     @Override
@@ -178,7 +173,6 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
@@ -196,12 +190,11 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
         if(result.isSuccess()){
             GoogleSignInAccount account = result.getSignInAccount();
 
-            //acnt_name_txt.setText(account.getDisplayName().toString());
-            //Log.i(this.getClass().getCanonicalName(),"Before Auth");
             firebaseAuthwithGoogle(account);
-            //Log.i(this.getClass().getCanonicalName(),"After Auth");
         }else{
-           // updateUI(null);
+
+            Toast.makeText(FullscreenActivity.this, "Authentication failed.",
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -217,6 +210,10 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
                     Log.i(this.getClass().getCanonicalName(),"Logged in"+user.getDisplayName());
                     Toast.makeText(FullscreenActivity.this, "Welcome"+user.getDisplayName(),
                             Toast.LENGTH_SHORT).show();
+                    login_btn.setVisibility(View.GONE);
+
+                    Intent intent = new Intent(FullscreenActivity.this,tabs.class);
+                    startActivity(intent);
                 }else{
 
                     Toast.makeText(FullscreenActivity.this, "Authentication failed.",

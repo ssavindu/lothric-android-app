@@ -36,12 +36,6 @@
             android:orientation="vertical"
             tools:ignore="UselessParent">
 
-            <Button
-                android:id="@+id/TestButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="bypassLogin"
-                android:text="Bypass" />
 
             <com.google.android.gms.common.SignInButton
                 android:id="@+id/login_btn"
