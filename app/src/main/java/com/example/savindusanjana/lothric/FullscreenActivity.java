@@ -1,18 +1,42 @@
 package com.example.savindusanjana.lothric;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
+
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class FullscreenActivity extends AppCompatActivity {
+public class FullscreenActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
+
+    private static final int RC_SIGN_IN = 9001;
+    private GoogleApiClient googleApiClient;
+    private FirebaseAuth firebaseAuth;
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -105,7 +129,14 @@ public class FullscreenActivity extends AppCompatActivity {
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
-        findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+
+        findViewById(R.id.login_btn).setOnClickListener(this);
+        GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(getString(R.string.default_web_client_id)).requestEmail().build();
+        googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this,this).addApi(Auth.GOOGLE_SIGN_IN_API,options).build();
+
+        firebaseAuth = FirebaseAuth.getInstance();
+
+
     }
 
     @Override
@@ -117,6 +148,17 @@ public class FullscreenActivity extends AppCompatActivity {
         // are available.
         delayedHide(100);
     }
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.login_btn:
+                Log.i(this.getClass().getCanonicalName(),"Sign in button");
+                signIn();
+                Log.i(this.getClass().getCanonicalName(),"After Sign method");
+                break;
+
+        }
+    }
 
     private void toggle() {
         if (mVisible) {
@@ -125,7 +167,61 @@ public class FullscreenActivity extends AppCompatActivity {
             show();
         }
     }
+    private void signIn(){
+        Log.i(this.getClass().getCanonicalName(),"In sign in");
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+        startActivityForResult(signInIntent,RC_SIGN_IN);
+        Log.i(this.getClass().getCanonicalName(),"End sign in");
+    }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i(this.getClass().getCanonicalName(),"OnActivity");
+        super.onActivityResult(requestCode,resultCode,data);
+        Log.i(this.getClass().getCanonicalName(),"LOG 1");
+        if(requestCode==RC_SIGN_IN){
+            Log.i(this.getClass().getCanonicalName(),"LOG 2");
+
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            Log.i(this.getClass().getCanonicalName(),"check result"+result.isSuccess());
+            handleSignInResult(result);
+        }
+        Log.i(this.getClass().getCanonicalName(),"End Sign in");
+    }
+
+    private void handleSignInResult(GoogleSignInResult result){
+
+        if(result.isSuccess()){
+            GoogleSignInAccount account = result.getSignInAccount();
+
+            //acnt_name_txt.setText(account.getDisplayName().toString());
+            Log.i(this.getClass().getCanonicalName(),"Before Auth");
+            firebaseAuthwithGoogle(account);
+            Log.i(this.getClass().getCanonicalName(),"After Auth");
+        }else{
+           // updateUI(null);
+        }
+    }
+
+    public void firebaseAuthwithGoogle(GoogleSignInAccount account){
+
+        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(),null);
+        firebaseAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful()){
+
+                    FirebaseUser user = firebaseAuth.getCurrentUser();
+                    Log.i(this.getClass().getCanonicalName(),"Logged in");
+                }else{
+
+                    Toast.makeText(FullscreenActivity.this, "Authentication failed.",
+                            Toast.LENGTH_SHORT).show();
+
+                }
+            }
+        });
+    }
     private void hide() {
         // Hide UI first
         ActionBar actionBar = getSupportActionBar();
@@ -159,5 +255,14 @@ public class FullscreenActivity extends AppCompatActivity {
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
+    }
+
+    public void login_btn(){
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.i(this.getClass().getCanonicalName(),"Error");
     }
 }
