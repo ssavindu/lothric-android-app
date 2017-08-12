@@ -212,7 +212,9 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
                 if(task.isSuccessful()){
 
                     FirebaseUser user = firebaseAuth.getCurrentUser();
-                    Log.i(this.getClass().getCanonicalName(),"Logged in");
+                    Log.i(this.getClass().getCanonicalName(),"Logged in"+user.getDisplayName());
+                    Toast.makeText(FullscreenActivity.this, "Welcome"+user.getDisplayName(),
+                            Toast.LENGTH_SHORT).show();
                 }else{
 
                     Toast.makeText(FullscreenActivity.this, "Authentication failed.",
