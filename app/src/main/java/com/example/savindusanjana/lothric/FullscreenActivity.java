@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -21,6 +22,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -30,6 +32,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -115,6 +119,8 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+
         setContentView(R.layout.activity_fullscreen);
 
         mVisible = true;
@@ -130,6 +136,7 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
         });
 
         findViewById(R.id.login_btn).setOnClickListener(this);
+        findViewById(R.id.btnfirebase).setOnClickListener(this);
         GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(getString(R.string.default_web_client_id)).requestEmail().build();
         googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this,this).addApi(Auth.GOOGLE_SIGN_IN_API,options).build();
 
@@ -151,10 +158,36 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
                 signIn();
                 Log.i(this.getClass().getCanonicalName(),"After Sign method");
                 break;
+            case R.id.btnfirebase:
+                Intent intent = new Intent(FullscreenActivity.this,firebasetest.class);
+                startActivity(intent);
 
         }
     }
 
+    @Override
+    public void onStart(){
+        super.onStart();
+        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(googleApiClient);
+        if (opr.isDone()) {
+            // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
+            // and the GoogleSignInResult will be available instantly.
+            Log.d(this.getClass().getCanonicalName(), "Got cached sign-in");
+            GoogleSignInResult result = opr.get();
+            handleSignInResult(result);
+        } else {
+            // If the user has not previously signed in on this device or the sign-in has expired,
+            // this asynchronous branch will attempt to sign in the user silently.  Cross-device
+            // single sign-on will occur in this branch.
+            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
+                @Override
+                public void onResult(GoogleSignInResult googleSignInResult) {
+                    if(googleSignInResult.isSuccess()){
+                    handleSignInResult(googleSignInResult); }
+                }
+            });
+        }
+    }
     private void toggle() {
         if (mVisible) {
             hide();
@@ -191,6 +224,7 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
             GoogleSignInAccount account = result.getSignInAccount();
 
             firebaseAuthwithGoogle(account);
+
         }else{
 
             Toast.makeText(FullscreenActivity.this, "Authentication failed.",
@@ -211,9 +245,10 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
                     Toast.makeText(FullscreenActivity.this, "Welcome"+user.getDisplayName(),
                             Toast.LENGTH_SHORT).show();
                     login_btn.setVisibility(View.GONE);
-
+                    addUser();
                     Intent intent = new Intent(FullscreenActivity.this,tabs.class);
                     startActivity(intent);
+
                 }else{
 
                     Toast.makeText(FullscreenActivity.this, "Authentication failed.",
@@ -271,4 +306,28 @@ public class FullscreenActivity extends AppCompatActivity implements View.OnClic
         Intent intent = new Intent(FullscreenActivity.this,tabs.class);
         startActivity(intent);
     }
+
+   /* public void openFirebase(View view){
+        Intent intent = new Intent(FullscreenActivity.this,firebasetest.class);
+        startActivity(intent);
+
+    }
+
+    */
+    private void addUser(){
+        Log.i(this.getClass().getCanonicalName(),"IN add user");
+
+        DatabaseReference root = FirebaseDatabase.getInstance().getReference();
+
+        DatabaseReference users = root.child("users");
+
+        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference uID = users.child(userID);
+        DatabaseReference userName = uID.child("userName");
+        userName.setValue(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+        DatabaseReference userEmail = uID.child("email");
+        userEmail.setValue(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+    }
+
 }
+

@@ -26,4 +26,6 @@ public class JournalFrag extends Fragment {
         return inflater.inflate(R.layout.fragment_journal, container, false);
     }
 
+
+
 }

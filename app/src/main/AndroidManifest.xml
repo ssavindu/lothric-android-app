@@ -22,6 +22,7 @@
         </activity>
         <activity android:name=".tabs"></activity>
         <activity android:name=".newItem"></activity>
+        <activity android:name=".firebasetest"></activity>
     </application>
 
 </manifest>

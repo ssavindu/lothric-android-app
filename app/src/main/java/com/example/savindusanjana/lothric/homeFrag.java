@@ -1,6 +1,7 @@
 package com.example.savindusanjana.lothric;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -33,5 +34,6 @@ public class homeFrag extends Fragment {
         welcome_text.setText("Welcome oi "+user.getDisplayName());
         return view;
     }
+
 
 }
