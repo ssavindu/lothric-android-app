@@ -22,6 +22,7 @@
         android:layout_height="wrap_content"
         android:text="Save"
         android:layout_gravity="center"
+        android:onClick="save"
         />
 
 
